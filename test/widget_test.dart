@@ -9,11 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:next_generation_app/main.dart';
+import 'package:next_generation_app/services/api_service.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    final apiService = ApiService(
+      baseUrl: 'https://concert-webapi.abexacloud.com',
+      ignoreBadCertificates: false, // Establecer en true solo en entornos de desarrollo
+    );
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(apiService: apiService));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
