@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:next_generation_app/services/api_service.dart';
 import 'login_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  final ApiService apiService;
-
-  const HomeScreen({Key? key, required this.apiService}) : super(key: key);
+class HomeScreen extends StatefulWidget {  
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
-        _createSlideRoute(LoginScreen(apiService: widget.apiService)),
+        _createSlideRoute(LoginScreen()),
       );
     });
   }

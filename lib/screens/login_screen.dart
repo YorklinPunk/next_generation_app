@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:next_generation_app/services/api_service.dart';
+import 'package:next_generation_app/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  final ApiService apiService;
-
-  const LoginScreen({Key? key, required this.apiService}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -22,13 +20,13 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             // LOGO
-            SizedBox(height: 40),
+            SizedBox(height: 10),
             Icon(Icons.link, size: 80, color: Color.fromARGB(255, 0, 0, 0)),
             SizedBox(height: 10),
             Text("your logo",
                 style: TextStyle(color: Color.fromARGB(255, 14, 14, 14), fontSize: 18)),
 
-            SizedBox(height: 40),
+            SizedBox(height: 30),
 
             // LOGIN CARD
             Container(
@@ -144,8 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   Center(
                     child: OutlinedButton(
-                      onPressed: () {
-                        // Lógica de registro
+                       onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 255, 215, 160), // color interno personalizado

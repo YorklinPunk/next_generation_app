@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:next_generation_app/services/api_service.dart';
+import 'package:next_generation_app/db/mongo_database.dart'; // Asegúrate de tener esta clase
 import 'screens/home_screen.dart';
+import '../models/user_model.dart';
 
-void main() {
-  final apiService = ApiService(
-    baseUrl: 'https://dominio-api.com/', //CAMBIAR DOMINIO DE API
-    ignoreBadCertificates: true
-  );
-    runApp(MyApp(apiService: apiService));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Conectar a MongoDB antes de lanzar la app
+  await MongoDatabase.connect();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ApiService apiService;
-
-  const MyApp({super.key, required this.apiService});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(apiService: apiService)
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(), // Ya no necesitas pasar apiService
     );
   }
 }
