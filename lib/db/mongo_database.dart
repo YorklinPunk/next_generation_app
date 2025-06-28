@@ -10,8 +10,7 @@ class MongoDatabase {
 
   static Future<void> connect() async {
     db = await Db.create(
-      //"mongodb://zetita159:UNYj0yh8OrHpNDQZ@ac-xxxxx.mongodb.net:27017/DBNextGeneration?retryWrites=true&w=majority&tls=true"
-      "mongodb://zetita159:UNYj0yh8OrHpNDQZ@ac-rr0zizn-shard-00-00.np6zcyj.mongodb.net:27017/DBNextGeneration?retryWrites=true&w=majority&tls=true"
+      "mongodb://flutter_user:Flutter2024!@ac-8rk5moq-shard-00-00.np6zcyj.mongodb.net:27017,ac-8rk5moq-shard-00-01.np6zcyj.mongodb.net:27017,ac-8rk5moq-shard-00-02.np6zcyj.mongodb.net:27017/?ssl=true&replicaSet=atlas-8rk5moq-shard-0&authSource=admin&retryWrites=true&w=majority"
     );
     await db.open();
     print("✅ Conectado a MongoDB");

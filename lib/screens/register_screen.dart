@@ -16,6 +16,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _documentController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _verPassword = true;
+  
+  @override
+  void initState() {
+    super.initState();
+
+    // Generar sugerencia automática de usuario
+    _lastNameController.addListener(_sugerirUsername);
+  }
+
+  void _sugerirUsername() {
+    final nombre = _nameController.text.trim();
+    final apellidos = _lastNameController.text.trim().split(' ');
+
+    if (nombre.isNotEmpty && apellidos.isNotEmpty) {
+      final primeraLetraNombre = nombre[0].toLowerCase();
+      final apellidoPaterno = apellidos[0].toLowerCase();
+      final sugerido = '$primeraLetraNombre$apellidoPaterno';
+
+      setState(() {
+        _usernameController.text = sugerido;
+      });
+    }
+  }
 
   void _registrarUsuario() async {
     if (_formKey.currentState!.validate()) {
@@ -58,8 +82,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               _campo("Nombres", _nameController),
               _campo("Apellidos", _lastNameController),
-              _campo("Documento", _documentController),
-              _campo("Usuario", _usernameController),
+              _campo("DNI", _documentController, isNumeric: true),
+              _campo("Usuario", _usernameController, enabled: false),
               _campo("Contraseña", _passwordController, isPassword: true),
               SizedBox(height: 20),
               ElevatedButton(
@@ -71,7 +95,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text("Crear cuenta", style: TextStyle(color: Colors.black)),
+                child:
+                    Text("Crear cuenta", style: TextStyle(color: Colors.black)),
               )
             ],
           ),
@@ -80,24 +105,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _campo(String label, TextEditingController controller,
-      {bool isPassword = false}) {
-    return Padding(
+  Widget _campo(
+    String label,
+    TextEditingController controller, {
+    bool isPassword = false,
+    bool isNumeric = false,
+    bool enabled = true,
+  }) {
+   return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
-        obscureText: isPassword,
+        enabled: enabled,
+        obscureText: _verPassword,
+        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.white70),
+          suffixIcon: isPassword
+              ? IconButton(
+                  icon: Icon(
+                    _verPassword ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.white70,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _verPassword = !_verPassword;
+                    });
+                  },
+                )
+              : null,
           enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xFFff8e3a))),
         ),
         validator: (value) =>
-            value == null || value.isEmpty ? "Campo requerido" : null,
+          value == null || value.isEmpty ? "Campo requerido" : null,
       ),
     );
   }
