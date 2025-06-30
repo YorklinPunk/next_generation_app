@@ -3,6 +3,7 @@ class UserModel {
   final String lastName;
   final String document;
   final String username;
+  final int ministry;
   final String password;
   final int role;
   final int state; // 1: activo, 0: inactivo
@@ -13,6 +14,7 @@ class UserModel {
     required this.lastName,
     required this.document,
     required this.username,
+    required this.ministry,
     required this.password,
     required this.role,
     required this.state, // 1: activo, 0: inactivo 
@@ -26,6 +28,7 @@ class UserModel {
       'lastName': lastName,
       'document': document,
       'username': username,
+      'ministry': ministry,
       'password': password,
       'role': role,
       'state': state,
@@ -40,6 +43,7 @@ class UserModel {
       lastName: map['lastName'],
       document: map['document'],
       username: map['username'],
+      ministry: map['ministry'],
       password: map['password'],
       role: map['role'],
       state: map['state'] ?? 1, // Por defecto activo

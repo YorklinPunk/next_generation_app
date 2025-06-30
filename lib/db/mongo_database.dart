@@ -1,5 +1,9 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../models/user_model.dart';
+import '../models/ministry_model.dart';
+
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class MongoDatabase {
   static var db;
@@ -21,6 +25,14 @@ class MongoDatabase {
     checkinsCollection = db.collection("checkins");
   }
 
+  //Hash de contraseña
+  // Utiliza SHA-256 para encriptar la contraseña
+  static String encriptarPassword(String password) {
+    final bytes = utf8.encode(password);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
   static Future<List<Map<String, dynamic>>> getUsuarios() async {
     return await userCollection.find().toList();
   }
@@ -38,5 +50,23 @@ class MongoDatabase {
   static Future<List<UserModel>> getUsers() async {
     final docs = await userCollection.find().toList();
     return docs.map((doc) => UserModel.fromMap(doc)).toList();
+  }
+
+  static Future<bool> existeUsername(String username) async {
+    final user = await userCollection.findOne({'username': username});
+    return user != null;
+  }
+
+  static Future<bool> existeDocumento(String document) async {
+    final user = await userCollection.findOne({'document': document});
+    return user != null;
+  }
+
+
+  //LISTA DE MINISTERIOS
+  static Future<List<MinistryModel>> getMinistries() async {
+    final ministryCollection = db.collection('ministries');
+    final results = await ministryCollection.find().toList();
+    return results.map((doc) => MinistryModel.fromMap(doc)).toList();
   }
 }

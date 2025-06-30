@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:next_generation_app/db/mongo_database.dart';
+import 'package:next_generation_app/models/ministry_model.dart';
 import 'package:next_generation_app/models/user_model.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -14,16 +15,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _documentController = TextEditingController();
+  final _ministryController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _verPassword = true;
-  
+  List<MinistryModel> _ministries = [];
+  MinistryModel? _selectedMinistry;
+
   @override
   void initState() {
     super.initState();
 
     // Generar sugerencia automática de usuario
     _lastNameController.addListener(_sugerirUsername);
+    _cargarMinistries();
+  }
+
+  void _cargarMinistries() async {
+    final data = await MongoDatabase.getMinistries();
+    setState(() {
+      _ministries = data;
+    });
   }
 
   void _sugerirUsername() {
@@ -43,12 +55,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _registrarUsuario() async {
     if (_formKey.currentState!.validate()) {
+      final username = _usernameController.text.trim();
+      final document = _documentController.text.trim();
+      final password = _passwordController.text.trim();
+
+      // Validaciones específicas
+      if (await MongoDatabase.existeUsername(username)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("⚠️ El nombre de usuario ya está registrado")),
+        );
+        return;
+      }
+
+      if (await MongoDatabase.existeDocumento(document)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("⚠️ El DNI ya está registrado")),
+        );
+        return;
+      }
+
+      if (password.length <= 5 || password.contains(' ')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("⚠️ La contraseña debe tener más de 5 caracteres y sin espacios")),
+        );
+        return;
+      }
+
       final user = UserModel(
         name: _nameController.text,
         lastName: _lastNameController.text,
-        document: _documentController.text,
-        username: _usernameController.text,
-        password: _passwordController.text,
+        document: document,
+        ministry: _selectedMinistry!.codMinistry,
+        username: username,
+        password: MongoDatabase.encriptarPassword(password),
         role: 3,
         state: 1,
         dateRegistration: DateTime.now(),
@@ -60,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SnackBar(content: Text("✅ Usuario registrado")),
       );
 
-      Navigator.pop(context); // volver a login
+      Navigator.pop(context);
     }
   }
 
@@ -83,6 +122,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _campo("Nombres", _nameController),
               _campo("Apellidos", _lastNameController),
               _campo("DNI", _documentController, isNumeric: true),
+              DropdownButtonFormField<MinistryModel>(
+                value: _selectedMinistry,
+                items: _ministries.map((min) {
+                  return DropdownMenuItem<MinistryModel>(
+                    value: min,
+                    child: Text(min.nomMinistry),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    _selectedMinistry = val;
+                  });
+                },
+                dropdownColor: Color(0xFF1E1E2C),
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: "Ministerio",
+                  labelStyle: TextStyle(color: Colors.white70),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white30)),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFFff8e3a))),
+                ),
+                validator: (val) =>
+                    val == null ? "Seleccione un ministerio" : null,
+              ),
               _campo("Usuario", _usernameController, enabled: false),
               _campo("Contraseña", _passwordController, isPassword: true),
               SizedBox(height: 20),
