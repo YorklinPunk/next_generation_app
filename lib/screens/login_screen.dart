@@ -14,17 +14,27 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFfef5bd), // Fondo oscuro
+      backgroundColor: Color(0xFFf8e152), // Fondo oscuro
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 50),
         child: Column(
           children: [
             // LOGO
-            SizedBox(height: 10),
-            Icon(Icons.link, size: 80, color: Color.fromARGB(255, 0, 0, 0)),
-            SizedBox(height: 10),
-            Text("your logo",
-                style: TextStyle(color: Color.fromARGB(255, 14, 14, 14), fontSize: 18)),
+            // SizedBox(height: 10),
+            // Icon(Icons.link, size: 80, color: Color.fromARGB(255, 0, 0, 0)),
+            //SizedBox(height: 10),
+            Image.asset(
+              'assets/images/logo.png',
+              height: 130,
+            ),
+            //SizedBox(height: 10),
+            Text(
+              "Red García",
+              style: TextStyle(
+                color: Color.fromARGB(255, 14, 14, 14),
+                fontSize: 18,
+              ),
+            ),
 
             SizedBox(height: 30),
 

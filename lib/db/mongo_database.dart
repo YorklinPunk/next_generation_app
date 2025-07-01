@@ -11,11 +11,13 @@ class MongoDatabase {
   static var servicesCollection;
   static var rolesCollection;
   static var checkinsCollection;
+  static var ministriesCollection;
 
   static Future<void> connect() async {
     db = await Db.create(
-      "mongodb://flutter_user:Flutter2024!@ac-8rk5moq-shard-00-00.np6zcyj.mongodb.net:27017,ac-8rk5moq-shard-00-01.np6zcyj.mongodb.net:27017,ac-8rk5moq-shard-00-02.np6zcyj.mongodb.net:27017/?ssl=true&replicaSet=atlas-8rk5moq-shard-0&authSource=admin&retryWrites=true&w=majority"
+      "mongodb://flutter_user:Flutter2024!@ac-8rk5moq-shard-00-00.np6zcyj.mongodb.net:27017,ac-8rk5moq-shard-00-01.np6zcyj.mongodb.net:27017,ac-8rk5moq-shard-00-02.np6zcyj.mongodb.net:27017/DBNextGeneration?ssl=true&replicaSet=atlas-8rk5moq-shard-0&authSource=admin&retryWrites=true&w=majority"
     );
+
     await db.open();
     print("✅ Conectado a MongoDB");
 
@@ -23,6 +25,7 @@ class MongoDatabase {
     servicesCollection = db.collection("services");
     rolesCollection = db.collection("roles");
     checkinsCollection = db.collection("checkins");
+    ministriesCollection = db.collection("ministries");
   }
 
   //Hash de contraseña
@@ -65,8 +68,27 @@ class MongoDatabase {
 
   //LISTA DE MINISTERIOS
   static Future<List<MinistryModel>> getMinistries() async {
-    final ministryCollection = db.collection('ministries');
-    final results = await ministryCollection.find().toList();
-    return results.map((doc) => MinistryModel.fromMap(doc)).toList();
+    try {
+      final results = await ministriesCollection.find().toList();
+
+      final ministries = results.map((doc) {
+        final map = Map<String, dynamic>.from(doc); // conversión explícita
+        if (map['status'] == 1 && map.containsKey('codMinistry')) {
+          return MinistryModel.fromMap(map);
+        }
+        // Validar que los campos existan
+        if (map.containsKey('codMinistry') && map.containsKey('nomMinistry')) {
+          return MinistryModel.fromMap(map);
+        } else {
+          print("❌ Registro inválido: $map");
+          return null;
+        }
+      }).whereType<MinistryModel>().toList();
+
+      return ministries;
+    } catch (e) {
+      print("❌ Error al obtener ministerios: $e");
+      return [];
+    }
   }
 }

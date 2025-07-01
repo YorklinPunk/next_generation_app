@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:next_generation_app/db/mongo_database.dart'; // Asegúrate de tener esta clase
 import 'screens/home_screen.dart';
-import '../models/user_model.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(), // Ya no necesitas pasar apiService
+      home: HomeScreen(),
     );
   }
 }
