@@ -100,8 +100,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       await MongoDatabase.userCollection.insertOne(user.toMap());
-      showCustomDialog(context, "Usuario registrado correctamente", 1);
-      Navigator.pop(context);
+      showCustomDialog(context, "Usuario registrado correctamente", 1,
+        onClose: () {
+          Navigator.pop(context); // cerrar pantalla de registro después del diálogo
+        },
+      );
     }
   }
 

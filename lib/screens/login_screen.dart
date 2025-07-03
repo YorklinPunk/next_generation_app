@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:next_generation_app/screens/principal_screen.dart';
 import 'package:next_generation_app/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,15 +20,10 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 50),
         child: Column(
           children: [
-            // LOGO
-            // SizedBox(height: 10),
-            // Icon(Icons.link, size: 80, color: Color.fromARGB(255, 0, 0, 0)),
-            //SizedBox(height: 10),
             Image.asset(
               'assets/images/logo.png',
               height: 130,
             ),
-            //SizedBox(height: 10),
             Text(
               "Red García",
               style: TextStyle(
@@ -78,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderSide: BorderSide(color: Colors.grey[600]!),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.pinkAccent),
+                        borderSide: BorderSide(color: Color(0xFFf8e152)),
                       ),
                     ),
                   ),
@@ -109,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderSide: BorderSide(color: Colors.grey[600]!),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.pinkAccent),
+                        borderSide: BorderSide(color: Color(0xFFf8e152)),
                       ),
                     ),
                   ),
@@ -129,8 +125,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   // LOGIN BUTTON
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Aquí iría la lógica de login con apiService
+                      onPressed: () {                       
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFff8e3a),
@@ -159,8 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       style: OutlinedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 255, 215, 160), // color interno personalizado
-                        side: BorderSide(color: Color(0xFFff8e3a), width: 1), // borde naranja
+                        backgroundColor: Color.fromARGB(255, 255, 215, 160),
+                        side: BorderSide(color: Color(0xFFff8e3a), width: 1),
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),

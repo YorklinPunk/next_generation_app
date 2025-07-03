@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void showCustomDialog(BuildContext context, String message, int code) {
+void showCustomDialog(BuildContext context, String message, int code,{VoidCallback? onClose}) {
   showDialog(
     context: context,
     builder: (context) {
@@ -33,6 +33,7 @@ void showCustomDialog(BuildContext context, String message, int code) {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  if (onClose != null) onClose();
                 },
                 child: const Text(
                   'Cerrar',
