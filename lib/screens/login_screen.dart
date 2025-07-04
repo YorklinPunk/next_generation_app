@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:next_generation_app/screens/principal_screen.dart';
 import 'package:next_generation_app/screens/register_screen.dart';
+import 'package:next_generation_app/services/auth_service.dart';
+import 'package:next_generation_app/utils/dialog_helper.dart';
+import 'package:next_generation_app/screens/principal_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -11,6 +14,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Email Field
                   TextField(
+                    controller: _usernameController,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: 'Usuario',
@@ -82,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Password Field
                   TextField(
+                    controller: _passwordController,
                     obscureText: _obscurePassword,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -125,11 +132,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   // LOGIN BUTTON
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {                       
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const PrincipalScreen()),
-                        );
+                      onPressed: () async  {
+                        //                       
+                        final username = _usernameController.text.trim();
+                        final password = _passwordController.text.trim();
+
+                        if (username.isEmpty || password.isEmpty) {
+                          showCustomDialog(context, "Todos los campos son obligatorios", 3);
+                          return;
+                        }
+
+                        final user = await AuthService.login(username, password);
+
+                        if (user != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+                          );
+                        } else {
+                          showCustomDialog(context, "Usuario y/o contraseña incorrecta", 3);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFff8e3a),
