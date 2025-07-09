@@ -1,66 +1,171 @@
 import 'package:flutter/material.dart';
 
 class PrincipalScreen extends StatelessWidget {
-  const PrincipalScreen({Key? key}) : super(key: key);
+  const PrincipalScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E2C),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E2C),
-        elevation: 0,
-        title: const Text(
-          'Pantalla Principal',
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.dashboard, color: Colors.white, size: 80),
-            const SizedBox(height: 20),
-            const Text(
-              '¡Bienvenido!',
-              style: TextStyle(color: Colors.white, fontSize: 24),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Esta es la pantalla principal',
-              style: TextStyle(color: Colors.white70, fontSize: 16),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                // Por ahora solo muestra un diálogo
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Atención'),
-                    content: const Text('Aquí se desarrollarán más funciones.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cerrar'),
-                      ),
-                    ],
+      backgroundColor: const Color(0xFFf8e152),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome + Avatar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Welcome\nHome, Yorklin",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFff8e3a),
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  const CircleAvatar(
+                    backgroundImage: AssetImage("assets/avatar.png"), // Usa tu imagen real
+                    radius: 25,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Rooms horizontal scroll
+              // const Text("Rooms", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              // const SizedBox(height: 12),
+              // SizedBox(
+              //   height: 60,
+              //   child: ListView(
+              //     scrollDirection: Axis.horizontal,
+              //     children: [
+              //       _roomButton("Living Room", Icons.weekend),
+              //       _roomButton("Bedroom", Icons.bed),
+              //       _roomButton("Kitchen", Icons.kitchen),
+              //       _roomButton("Bathroom", Icons.bathtub),
+              //     ],
+              //   ),
+              // ),
+              const SizedBox(height: 20),
+
+              // Smart systems
+              const Text("Smart Systems", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  children: [
+                    _smartCard(
+                      context,
+                      title: "Smart TV",
+                      devices: "2 Active devices",
+                      color: const Color(0xFFEBD8FD),
+                      icon: Icons.tv,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/smartTv");
+                      },
+                    ),
+                    _smartCard(
+                      context,
+                      title: "Air Conditioner",
+                      devices: "1 Active device",
+                      color: const Color(0xFFC9F0FF),
+                      icon: Icons.ac_unit,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/airConditioner");
+                      },
+                    ),
+                    _smartCard(
+                      context,
+                      title: "Audio System",
+                      devices: "1 Active device",
+                      color: const Color(0xFFFFF2C7),
+                      icon: Icons.speaker,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/audioSystem");
+                      },
+                    ),
+                    _smartCard(
+                      context,
+                      title: "Heating System",
+                      devices: "No active devices",
+                      color: const Color(0xFFFFD3C3),
+                      icon: Icons.fireplace,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/heatingSystem");
+                      },
+                    ),
+                  ],
                 ),
               ),
-              child: const Text(
-                'Mostrar diálogo',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF1E1E2C),
+        selectedItemColor: Color(0xFFff8e3a),
+        unselectedItemColor: Colors.white54,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        ],
+      ),
+    );
+  }
+
+  // Reusable room icon
+  static Widget _roomButton(String label, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Color(0xFF1E1E2C),
+            child: Icon(icon, color: Colors.white),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
+  // Smart system card
+  static Widget _smartCard(BuildContext context, {
+    required String title,
+    required String devices,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Switch(
+                value: true,
+                onChanged: (_) {},
               ),
-            )
+            ),
+            Icon(icon, size: 36, color: Colors.black87),
+            const SizedBox(height: 8),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(devices, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
