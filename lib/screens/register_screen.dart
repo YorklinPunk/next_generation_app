@@ -3,6 +3,7 @@ import 'package:next_generation_app/db/mongo_database.dart';
 import 'package:next_generation_app/models/ministry_model.dart';
 import 'package:next_generation_app/models/user_model.dart';
 import 'package:next_generation_app/utils/dialog_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -73,17 +74,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       // Validaciones específicas
       if (await MongoDatabase.existeUsername(username)) {
-        showCustomDialog(context, "El nombre de usuario ya está registrado", 3);
+        showCustomDialog(context, "El nombre de usuario ya está registrado", 2);
         return;
       }
 
       if (await MongoDatabase.existeDocumento(document)) {
-        showCustomDialog(context, "El DNI ya está registrado", 3);
+        showCustomDialog(context, "El DNI ya está registrado", 2);
         return;
       }
 
       if (password.length <= 5 || password.contains(' ')) {
-        showCustomDialog(context, "La contraseña debe tener más de 5 caracteres y sin espacios", 3);
+        showCustomDialog(context, "La contraseña debe tener más de 5 caracteres y sin espacios", 2);
         return;
       }
 
@@ -127,8 +128,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _campo("Nombres", _nameController),
               _campo("Apellidos", _lastNameController),
               _campo("DNI", _documentController, isNumeric: true),
-              DropdownButtonFormField<MinistryModel>(
+              DropdownButtonFormField2<MinistryModel>(
+                isExpanded: true,
                 value: _selectedMinistry,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  labelText: "Ministerio",
+                  labelStyle: TextStyle(color: Colors.white70),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white30),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFff8e3a)),
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 150,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF1E1E2C),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
                 items: _ministries.map((min) {
                   return DropdownMenuItem<MinistryModel>(
                     value: min,
@@ -146,18 +166,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }
                   return null;
                 },
-                decoration: InputDecoration(
-                  labelText: "Ministerio",
-                  labelStyle: TextStyle(color: Colors.white70),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white30),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFff8e3a)),
-                  ),
-                ),
-                dropdownColor: Color(0xFF1E1E2C),
-                style: TextStyle(color: Colors.white),
               ),
               _campo("Usuario", _usernameController, enabled: false),
               _campo("Contraseña", _passwordController, isPassword: true),

@@ -19,9 +19,10 @@ void showCustomDialog(BuildContext context, String message, int code,{VoidCallba
                 size: 60,
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Resultado',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Text(
+                _getText(code),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
@@ -72,5 +73,18 @@ IconData _getIcon(int code) {
       return Icons.cancel;
     default:
       return Icons.info_outline;
+  }
+}
+
+String _getText(int code) {
+  switch (code) {
+    case 1:
+      return 'Resultado';
+    case 2:
+      return 'Error';
+    case 3:
+      return 'Canlelado';
+    default:
+      return 'Información';
   }
 }
