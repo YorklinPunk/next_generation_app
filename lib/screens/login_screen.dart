@@ -147,7 +147,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (user != null) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => PrincipalScreen(user: user),
+                            ),
                           );
                         } else {
                           showCustomDialog(context, "Usuario y/o contraseña incorrecta", 3);

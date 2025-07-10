@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:next_generation_app/models/user_model.dart';
 
 class PrincipalScreen extends StatelessWidget {
-  const PrincipalScreen({super.key});
+  final UserModel user;
+  const PrincipalScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +19,8 @@ class PrincipalScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "Welcome\nHome, Yorklin",
+                  Text(
+                    "Bienvenido, \n${user.name}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -51,7 +53,7 @@ class PrincipalScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Smart systems
-              const Text("Smart Systems", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text("Menú Principal", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Expanded(
                 child: GridView.count(
@@ -61,40 +63,70 @@ class PrincipalScreen extends StatelessWidget {
                   children: [
                     _smartCard(
                       context,
-                      title: "Smart TV",
-                      devices: "2 Active devices",
+                      title: "Somos Next Generation",
+                      subtitle: "Conócenos",
                       color: const Color(0xFFEBD8FD),
-                      icon: Icons.tv,
+                      icon: Icons.present_to_all,
                       onTap: () {
                         Navigator.pushNamed(context, "/smartTv");
                       },
                     ),
+                    // _smartCard(
+                    //   context,
+                    //   title: "Servicios",
+                    //   subtitle: "Conoce nuestras áreas servicios",
+                    //   color: const Color(0xFFC9F0FF),
+                    //   icon: Icons.church,
+                    //   onTap: () {
+                    //     Navigator.pushNamed(context, "/airConditioner");
+                    //   },
+                    // ),
                     _smartCard(
                       context,
-                      title: "Air Conditioner",
-                      devices: "1 Active device",
-                      color: const Color(0xFFC9F0FF),
-                      icon: Icons.ac_unit,
-                      onTap: () {
-                        Navigator.pushNamed(context, "/airConditioner");
-                      },
-                    ),
-                    _smartCard(
-                      context,
-                      title: "Audio System",
-                      devices: "1 Active device",
+                      title: "Programación",
+                      subtitle: "Programación de servicios semanales",
                       color: const Color(0xFFFFF2C7),
-                      icon: Icons.speaker,
+                      icon: Icons.event,
                       onTap: () {
                         Navigator.pushNamed(context, "/audioSystem");
                       },
                     ),
                     _smartCard(
                       context,
-                      title: "Heating System",
-                      devices: "No active devices",
+                      title: "Reporte",
+                      subtitle: "Asistencia semanal de ministerios",
                       color: const Color(0xFFFFD3C3),
-                      icon: Icons.fireplace,
+                      icon: Icons.bar_chart,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/heatingSystem");
+                      },
+                    ),
+                    _smartCard(
+                      context,
+                      title: "Fotos",
+                      subtitle: "Galería de fotos",
+                      color: const Color(0xFFC9F0FF),
+                      icon: Icons.photo_camera,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/heatingSystem");
+                      },
+                    ),
+                    _smartCard(
+                      context,
+                      title: "Asistencia",
+                      subtitle: "Asistencia de servidores",
+                      color: const Color(0xFFEBD8FD),
+                      icon: Icons.check_circle,
+                      onTap: () {
+                        Navigator.pushNamed(context, "/heatingSystem");
+                      },
+                    ),
+                    _smartCard(
+                      context,
+                      title: "Asignación",
+                      subtitle: "Asignación de tareas a servidores",
+                      color: const Color(0xFFFFF2C7),
+                      icon: Icons.assignment_ind,
                       onTap: () {
                         Navigator.pushNamed(context, "/heatingSystem");
                       },
@@ -139,7 +171,7 @@ class PrincipalScreen extends StatelessWidget {
   // Smart system card
   static Widget _smartCard(BuildContext context, {
     required String title,
-    required String devices,
+    required String subtitle,
     required Color color,
     required IconData icon,
     required VoidCallback onTap,
@@ -157,15 +189,11 @@ class PrincipalScreen extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.topRight,
-              child: Switch(
-                value: true,
-                onChanged: (_) {},
-              ),
             ),
             Icon(icon, size: 36, color: Colors.black87),
             const SizedBox(height: 8),
             Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            Text(devices, style: const TextStyle(fontSize: 12)),
+            Text(subtitle, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
