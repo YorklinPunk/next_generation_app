@@ -1,4 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
+import '../models/programming_model.dart';
 import '../models/user_model.dart';
 import '../models/ministry_model.dart';
 
@@ -12,6 +13,7 @@ class MongoDatabase {
   static var rolesCollection;
   static var checkinsCollection;
   static var ministriesCollection;
+  static var programmingCollection;
 
   static Future<void> connect() async {
     db = await Db.create(
@@ -26,6 +28,7 @@ class MongoDatabase {
     rolesCollection = db.collection("roles");
     checkinsCollection = db.collection("checkins");
     ministriesCollection = db.collection("ministries");
+    programmingCollection = db.collection("programming");
   }
 
   //Hash de contraseña
@@ -91,4 +94,29 @@ class MongoDatabase {
       return [];
     }
   }
+
+  static Future<List<ProgrammingModel>> getLastProgramming() async {
+    final results = await programmingCollection.find().sort({'fechaServicio': -1}).limit(1).toList();
+
+    if (results.isEmpty) return [];
+
+    final last = ProgrammingModel.fromMap(results.first);
+    final now = DateTime.now();
+
+    final lastWeek = DateTime.utc(last.fechaServicio.year, last.fechaServicio.month, last.fechaServicio.day);
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    final endOfWeek = now.add(Duration(days: 7 - now.weekday));
+
+    if (lastWeek.isBefore(startOfWeek) || lastWeek.isAfter(endOfWeek)) {
+      return []; // Indica que no es de esta semana
+    }
+
+    return [last];
+  }
+
+  static Future<List<ProgrammingModel>> getPreviousProgrammings() async {
+    final results = await programmingCollection.find().sort({'fechaServicio': -1}).skip(1).limit(5).toList();
+    return results.map((e) => ProgrammingModel.fromMap(e)).toList();
+  }
+
 }
