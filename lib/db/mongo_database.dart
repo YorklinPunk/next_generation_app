@@ -43,15 +43,15 @@ class MongoDatabase {
     return await userCollection.find().toList();
   }
 
-    // Método para insertar un usuario con modelo
-  static Future<void> insertUser(UserModel user) async {
-    try {
-      await userCollection.insertOne(user.toMap());
-      print("Usuario registrado con éxito ${user.username}");
-    } catch (e) {
-      print("Error al registrar: $e");
-    }
-  }
+  // Método para insertar un usuario con modelo
+  // static Future<void> insertUser(UserModel user) async {
+  //   try {
+  //     await userCollection.insertOne(user.toMap());
+  //     print("Usuario registrado con éxito ${user.username}");
+  //   } catch (e) {
+  //     print("Error al registrar: $e");
+  //   }
+  // }
 
   static Future<List<UserModel>> getUsers() async {
     final docs = await userCollection.find().toList();
@@ -95,28 +95,78 @@ class MongoDatabase {
     }
   }
 
-  static Future<List<ProgrammingModel>> getLastProgramming() async {
-    final results = await programmingCollection.find().sort({'fechaServicio': -1}).limit(1).toList();
 
-    if (results.isEmpty) return [];
+  //CRU programming
+  static Future<bool> insertProgramming(ProgrammingModel programming) async {
+    try {
+      final result = await programmingCollection.insertOne(programming.toMap());
+      return result.isSuccess;
+    } catch (e) {
+      print("Error al insertar programación: $e");
+      return false;
+    }
+  }
 
-    final last = ProgrammingModel.fromMap(results.first);
+  static Future<bool> updateProgramming(ProgrammingModel programming) async {
+    try {
+      if (programming.id == null) {
+        print("No se puede actualizar: id nulo");
+        return false;
+      }
+
+      final result = await programmingCollection.updateOne(
+        where.id(programming.id!),
+        modify.set('nomUsuarioCreacion', programming.nomUsuarioCreacion)
+          ..set('fechaHoraCreacion', programming.fechaHoraCreacion.toIso8601String())
+          ..set('roles', programming.roles.map((e) => e.toMap()).toList())
+          ..set('fechaHoraPogramacion', programming.fechaHoraPogramacion.toIso8601String())
+          ..set('fechaHoraEdicion', programming.fechaHoraEdicion.toIso8601String())
+          ..set('nomUsuarioEdicion', programming.nomUsuarioEdicion),
+      );
+
+      return result.isSuccess;
+    } catch (e) {
+      print("Error al actualizar programación: $e");
+      return false;
+    }
+  }
+
+  static Future<List<ProgrammingModel>> getAllProgrammings() async {
+    final result = await MongoDatabase.programmingCollection.find().toList();
+    return result.map((e) => ProgrammingModel.fromMap(e)).toList();
+  }
+
+  static Future<ProgrammingModel> latestOfCurrentWeek() async {
     final now = DateTime.now();
-
-    final lastWeek = DateTime.utc(last.fechaServicio.year, last.fechaServicio.month, last.fechaServicio.day);
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final endOfWeek = now.add(Duration(days: 7 - now.weekday));
+    final endOfWeek = startOfWeek.add(const Duration(days: 6));
 
-    if (lastWeek.isBefore(startOfWeek) || lastWeek.isAfter(endOfWeek)) {
-      return []; // Indica que no es de esta semana
+    try {
+      final result = await programmingCollection.find({
+        'fechaHoraPogramacion': {
+          '\$gte': startOfWeek.toIso8601String(),
+          '\$lte': endOfWeek.toIso8601String(),
+        }
+      }).sort({'fechaHoraPogramacion': -1}).toList();
+
+      if (result.isNotEmpty) {
+        return ProgrammingModel.fromMap(result.first);
+      }
+    } catch (e) {
+      print("Error al buscar programación de la semana actual: $e");
     }
 
-    return [last];
+    // Retornar modelo vacío si no se encontró nada o hubo error
+    return ProgrammingModel(
+      id: null,
+      nomUsuarioCreacion: '',
+      fechaHoraCreacion: DateTime.now(),
+      roles: [],
+      fechaHoraPogramacion: DateTime.now(),
+      fechaHoraEdicion: DateTime.now(),
+      nomUsuarioEdicion: '',
+    );
   }
 
-  static Future<List<ProgrammingModel>> getPreviousProgrammings() async {
-    final results = await programmingCollection.find().sort({'fechaServicio': -1}).skip(1).limit(5).toList();
-    return results.map((e) => ProgrammingModel.fromMap(e)).toList();
-  }
 
 }
